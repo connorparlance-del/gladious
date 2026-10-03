@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gladiadores — Coliseo</title>
+<meta name="description" content="Juego de gladiadores en primera persona para navegador: duelo 1v1 online y supervivencia cooperativa por rondas.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="game-root">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- ===================== HUD ===================== -->
+    <div id="hud" class="hidden">
+        <div id="crosshair"><span></span><span></span><span></span><span></span></div>
+        <div id="hitmarker"></div>
+        <div id="vignette"></div>
+        <div id="damage-flash"></div>
+        <div id="damage-dirs"></div>
+        <div id="lowhp"></div>
+
+        <div id="hud-top">
+            <div id="round-box" class="panel">
+                <div class="lbl">RONDA</div>
+                <div id="round-num">1</div>
+                <div id="round-sub"></div>
+            </div>
+            <div id="duel-box" class="panel hidden">
+                <div id="duel-names"></div>
+                <div id="duel-score">0 — 0</div>
+            </div>
+        </div>
+
+        <div id="boss-bar" class="hidden">
+            <div id="boss-name"></div>
+            <div class="bar"><div id="boss-fill"></div><div id="boss-phase-marks"><i style="left:33%"></i><i style="left:66%"></i></div></div>
+        </div>
+
+        <div id="opponent-box" class="panel hidden">
+            <div id="opp-name"></div>
+            <div class="bar small"><div id="opp-fill" class="fill hp"></div></div>
+        </div>
+
+        <div id="team-box"></div>
+        <div id="killfeed"></div>
+
+        <div id="vitals" class="panel">
+            <div class="vrow"><span class="vlbl">VIDA</span><div class="bar"><div id="hp-fill" class="fill hp"></div><span id="hp-text"></span></div></div>
+            <div class="vrow"><span class="vlbl">RESIST.</span><div class="bar"><div id="st-fill" class="fill st"></div></div></div>
+        </div>
+
+        <div id="points-box" class="panel">
+            <div class="lbl">PUNTOS</div>
+            <div id="points-num">0</div>
+            <div id="points-pop"></div>
+        </div>
+
+        <div id="weapon-box" class="panel">
+            <div id="weapon-name">Gladius</div>
+            <div id="weapon-ammo">∞</div>
+            <div id="weapon-slots"></div>
+            <div id="special-cd"><div id="special-fill"></div><span>F</span></div>
+        </div>
+
+        <div id="prompt" class="hidden"></div>
+        <div id="revive-bar" class="hidden"><div id="revive-fill"></div></div>
+        <div id="banner" class="hidden"><div id="banner-title"></div><div id="banner-sub"></div></div>
+        <div id="toast"></div>
+        <div id="countdown" class="hidden"></div>
+        <div id="dmg-numbers"></div>
+        <div id="downed" class="hidden"><div class="big">HAS CAÍDO</div><div>Un compañero puede reanimarte (E)</div><div id="downed-timer"></div></div>
+        <div id="dead" class="hidden"><div class="big">HAS MUERTO</div><div id="dead-sub"></div></div>
+        <div id="waiting-opp" class="hidden"><div class="big">RIVAL DESCONECTADO</div><div>Esperando reconexión…</div></div>
+        <div id="scoreboard" class="hidden panel"></div>
+    </div>
+
+    <!-- ===================== OVERLAYS ===================== -->
+    <div id="click-to-play" class="overlay hidden">
+        <div class="cta">HAZ CLIC PARA JUGAR</div>
+        <div class="sub">ESC — menú de pausa</div>
+    </div>
+
+    <div id="conn-lost" class="overlay hidden">
+        <div class="box">
+            <h2>CONEXIÓN PERDIDA</h2>
+            <p id="conn-lost-msg">Intentando reconectar…</p>
+            <div class="spinner"></div>
+            <button class="btn ghost" data-act="leave-match">VOLVER AL MENÚ</button>
+        </div>
+    </div>
+
+    <div id="results" class="overlay hidden">
+        <div class="box wide">
+            <h2 id="results-title">FIN</h2>
+            <p id="results-sub"></p>
+            <div id="results-table"></div>
+            <div class="row">
+                <button class="btn primary hidden" id="btn-again" data-act="again">REVANCHA</button>
+                <button class="btn ghost" data-act="leave-match">VOLVER AL MENÚ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pause" class="overlay hidden">
+        <div class="box">
+            <h2>PAUSA</h2>
+            <p id="pause-info"></p>
+            <button class="btn primary" data-act="resume">CONTINUAR</button>
+            <button class="btn" data-go="controls" data-back="pause">CONTROLES</button>
+            <button class="btn" data-go="settings" data-back="pause">AJUSTES</button>
+            <button class="btn danger" data-act="leave-match">ABANDONAR PARTIDA</button>
+        </div>
+    </div>
+
+    <!-- ===================== MENÚS ===================== -->
+    <div id="menus" class="overlay menu-bg">
+        <div class="menu-screen" id="m-main">
+            <div class="title-block">
+                <div class="laurel">❦</div>
+                <h1>GLADIADORES</h1>
+                <div class="tagline">Gloria o muerte en el coliseo</div>
+            </div>
+            <div class="menu-col">
+                <button class="btn primary" data-go="duel">1V1 ONLINE</button>
+                <button class="btn primary" data-go="survival">SUPERVIVENCIA</button>
+                <button class="btn" data-go="create">CREAR PARTIDA</button>
+                <button class="btn" data-go="join">UNIRSE A PARTIDA</button>
+                <button class="btn ghost" data-go="profile">PERSONALIZAR GLADIADOR</button>
+                <button class="btn ghost" data-go="controls" data-back="main">CONTROLES</button>
+                <button class="btn ghost" data-go="settings" data-back="main">AJUSTES</button>
+            </div>
+            <div class="best" id="best-line"></div>
+        </div>
+
+        <div class="menu-screen hidden" id="m-survival">
+            <h2>SUPERVIVENCIA</h2>
+            <p class="sub">Rondas infinitas de gladiadores. Gana puntos, compra armas en las paredes, abre galerías y sobrevive a los campeones.</p>
+            <div class="menu-col">
+                <button class="btn primary" data-act="solo">JUGAR EN SOLITARIO</button>
+                <button class="btn" data-act="create-coop">CREAR PARTIDA COOPERATIVA</button>
+                <button class="btn" data-go="join">UNIRSE A PARTIDA</button>
+                <button class="btn ghost" data-go="main">VOLVER</button>
+            </div>
+        </div>
+
+        <div class="menu-screen hidden" id="m-duel">
+            <h2>DUELO 1V1 ONLINE</h2>
+            <p class="sub">Gladiador contra gladiador. Gana quien venza 3 rondas.</p>
+            <div class="loadout-pick" data-loadout></div>
+            <div class="menu-col">
+                <button class="btn primary" data-act="create-duel">CREAR DUELO</button>
+                <button class="btn" data-go="join">UNIRSE A DUELO</button>
+                <button class="btn ghost" data-go="main">VOLVER</button>
+            </div>
+        </div>
+
+        <div class="menu-screen hidden" id="m-create">
+            <h2>CREAR PARTIDA</h2>
+            <p class="sub">Elige el modo. Recibirás un código para compartir.</p>
+            <div class="menu-col">
+                <button class="btn primary" data-act="create-duel">DUELO 1V1</button>
+                <button class="btn primary" data-act="create-coop">SUPERVIVENCIA COOPERATIVA (2-4)</button>
+                <button class="btn ghost" data-go="main">VOLVER</button>
+            </div>
+        </div>
+
+        <div class="menu-screen hidden" id="m-join">
+            <h2>UNIRSE A PARTIDA</h2>
+            <p class="sub">Introduce el código que te ha dado el anfitrión.</p>
+            <input id="join-code" class="code-input" maxlength="5" placeholder="K7X4P" autocomplete="off" spellcheck="false">
+            <div class="menu-col">
+                <button class="btn primary" data-act="join">CONECTAR</button>
+                <button class="btn ghost" data-act="cancel-join">VOLVER</button>
+            </div>
+            <div class="status-line" id="join-status"></div>
+        </div>
+
+        <div class="menu-screen hidden" id="m-lobby">
+            <h2 id="lobby-title">PARTIDA CREADA</h2>
+            <div class="lobby-mode" id="lobby-mode"></div>
+            <div class="code-wrap">
+                <div class="lbl">CÓDIGO</div>
+                <div class="code-big" id="lobby-code">-----</div>
+                <button class="btn small" data-act="copy-code" id="btn-copy">COPIAR CÓDIGO</button>
+            </div>
+            <div id="lobby-players"></div>
+            <div class="status-line" id="lobby-status">ESPERANDO JUGADOR…</div>
+            <div class="menu-col">
+                <button class="btn primary" data-act="start" id="btn-start">INICIAR</button>
+                <button class="btn ghost" data-act="leave-room">SALIR</button>
+            </div>
+            <div class="loadout-pick" data-loadout id="lobby-loadout"></div>
+        </div>
+
+        <div class="menu-screen hidden" id="m-profile">
+            <h2>TU GLADIADOR</h2>
+            <label class="field">NOMBRE <input id="prof-name" maxlength="16" autocomplete="off"></label>
+            <div class="field">COLOR <div id="prof-colors" class="swatches"></div></div>
+            <div class="field">ARMADURA <div id="prof-armor" class="seg"></div></div>
+            <p class="sub small">Ligera: más rápido, menos protección. Pesada: más protección, más lento.</p>
+            <div class="menu-col"><button class="btn primary" data-go="main" data-act="save-profile">GUARDAR</button></div>
+        </div>
+
+        <div class="menu-screen hidden" id="m-controls">
+            <h2>CONTROLES</h2>
+            <table class="controls">
+                <tr><td>W A S D</td><td>Moverse</td></tr>
+                <tr><td>Ratón</td><td>Mirar</td></tr>
+                <tr><td>Shift</td><td>Correr (gasta resistencia)</td></tr>
+                <tr><td>Espacio</td><td>Saltar</td></tr>
+                <tr><td>Ctrl / C</td><td>Agacharse</td></tr>
+                <tr><td>Q</td><td>Esquivar (invulnerable un instante)</td></tr>
+                <tr><td>Clic izquierdo</td><td>Ataque ligero · Mantener: ataque fuerte · Arco: tensar y soltar</td></tr>
+                <tr><td>Clic derecho</td><td>Bloquear (justo a tiempo = PARADA) · Armas a distancia: apuntar</td></tr>
+                <tr><td>F</td><td>Ataque especial del arma</td></tr>
+                <tr><td>E</td><td>Comprar / abrir / reanimar (mantener)</td></tr>
+                <tr><td>R</td><td>Recargar ballesta</td></tr>
+                <tr><td>1 / 2 · Rueda</td><td>Cambiar de arma</td></tr>
+                <tr><td>Tab</td><td>Marcador</td></tr>
+                <tr><td>Esc</td><td>Pausa / liberar ratón</td></tr>
+            </table>
+            <p class="sub small">La cabeza recibe doble daño. Los escudos enemigos bloquean de frente: rodéalos o usa armas pesadas para romper su guardia.</p>
+            <div class="menu-col"><button class="btn ghost" data-act="back">VOLVER</button></div>
+        </div>
+
+        <div class="menu-screen hidden" id="m-settings">
+            <h2>AJUSTES</h2>
+            <label class="field">SENSIBILIDAD <input type="range" id="set-sens" min="0.2" max="3" step="0.05"></label>
+            <label class="field">VOLUMEN <input type="range" id="set-vol" min="0" max="1" step="0.05"></label>
+            <label class="field check"><input type="checkbox" id="set-inverty"> INVERTIR EJE Y</label>
+            <label class="field check"><input type="checkbox" id="set-shadows"> SOMBRAS (requiere recargar)</label>
+            <label class="field">CALIDAD DE RESOLUCIÓN <input type="range" id="set-res" min="0.5" max="2" step="0.05"></label>
+            <div class="menu-col"><button class="btn ghost" data-act="back">VOLVER</button></div>
+        </div>
+
+        <div id="net-status" class="net-status"></div>
+        <div id="file-warning" class="file-warning hidden">Estás abriendo el juego como archivo local (file://). El modo solitario funciona, pero para jugar online publícalo en un hosting HTTPS (ver README).</div>
+    </div>
+
+    <div id="loading" class="overlay"><div class="cta">CONSTRUYENDO EL COLISEO…</div></div>
+</div>
+
+<!-- Motor 3D (Three.js r160, MIT, incluido localmente: sin dependencias de CDN) -->
+<script src="lib/three.min.js"></script>
+<!-- Configuración -->
+<script src="js/config.js"></script>
+<script src="js/network-config.js"></script>
+<!-- Núcleo -->
+<script src="js/core/util.js"></script>
+<script src="js/core/input.js"></script>
+<script src="js/core/audio.js"></script>
+<script src="js/core/textures.js"></script>
+<!-- Mundo -->
+<script src="js/world/physics.js"></script>
+<script src="js/world/arena.js"></script>
+<script src="js/world/arenaDecor.js"></script>
+<script src="js/world/nav.js"></script>
+<!-- Combate -->
+<script src="js/combat/weaponModels.js"></script>
+<script src="js/combat/character.js"></script>
+<script src="js/combat/hitbox.js"></script>
+<script src="js/combat/damage.js"></script>
+<script src="js/combat/projectiles.js"></script>
+<script src="js/fx/effects.js"></script>
+<!-- Jugador -->
+<script src="js/player/playerController.js"></script>
+<script src="js/player/weaponSystem.js"></script>
+<script src="js/player/viewmodel.js"></script>
+<!-- IA -->
+<script src="js/ai/enemyAI.js"></script>
+<script src="js/ai/bosses.js"></script>
+<script src="js/ai/enemies.js"></script>
+<!-- Partida -->
+<script src="js/game/waveManager.js"></script>
+<script src="js/game/shop.js"></script>
+<script src="js/game/match.js"></script>
+<!-- Red -->
+<script src="js/net/signaling.js"></script>
+<script src="js/net/peerLink.js"></script>
+<script src="js/net/session.js"></script>
+<!-- Interfaz y arranque -->
+<script src="js/ui/ui.js"></script>
+<script src="js/ui/menus.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

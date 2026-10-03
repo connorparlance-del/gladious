@@ -1,0 +1,9 @@
+{
+  "name": "gladiadores-signaling",
+  "version": "1.0.0",
+  "description": "Servidor de señalización (protocolo PeerServer) para Gladiadores. Sin dependencias.",
+  "main": "signaling-server.js",
+  "scripts": { "start": "node signaling-server.js" },
+  "engines": { "node": ">=16" },
+  "license": "MIT"
+}
