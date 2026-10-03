@@ -1,0 +1,24 @@
+cargado. señalización = {"host":"0.peerjs.com","port":443,"path":"/","secure":true,"key":"peerjs","heartbeatMs":5000,"connectTimeoutMs":12000}
+[HOST websocket] wss://0.peerjs.com/peerjs?key=peerjs&id=gladiadores-v1-JR2LS&token=3dhgwd8v4gnp7s&version=1.5.4
+[HOST ws<] {"type":"OPEN"}
+crear sala → JR2LS (0.4s)
+[GUEST websocket] wss://0.peerjs.com/peerjs?key=peerjs&id=gladiadores-v1-girwjejy4bcrw&token=hjsvkdta8y3p6r&version=1.5.4
+[GUEST ws<] {"type":"OPEN"}
+[GUEST ws>] {"type":"OFFER","dst":"gladiadores-v1-JR2LS","payload":{"type":"data","connectionId":"dc_glvbti523ck3","label":"gladiadores","reliable":true,"serialization":"none","browser":"chrome","sdp":{"type":"offer","sdp":"v=0\r\no=- 6532749365452762835 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\
+[GUEST ws>] {"type":"CANDIDATE","dst":"gladiadores-v1-JR2LS","payload":{"type":"data","connectionId":"dc_glvbti523ck3","candidate":{"candidate":"candidate:2774558315 1 udp 2113937151 0277091e-b4e7-47e2-873d-a70c8c33cf2e.local 33376 typ host generation 0 ufrag xSia network-cost 999","sdpMid":"0","sdpMLineIndex":
+[GUEST ws>] {"type":"CANDIDATE","dst":"gladiadores-v1-JR2LS","payload":{"type":"data","connectionId":"dc_glvbti523ck3","candidate":{"candidate":"candidate:1942271019 1 udp 1677729535 4.155.5.178 56336 typ srflx raddr 0.0.0.0 rport 0 generation 0 ufrag xSia network-cost 999","sdpMid":"0","sdpMLineIndex":0,"usern
+[HOST ws<] {"dst":"gladiadores-v1-JR2LS","payload":{"browser":"chrome","connectionId":"dc_glvbti523ck3","label":"gladiadores","reliable":true,"sdp":{"sdp":"v=0\r\no=- 6532749365452762835 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\na=extmap-allow-mixed\r\na=msid-semantic: WMS\r\nm=application 9 UD
+[HOST ws<] {"dst":"gladiadores-v1-JR2LS","payload":{"candidate":{"candidate":"candidate:2774558315 1 udp 2113937151 0277091e-b4e7-47e2-873d-a70c8c33cf2e.local 33376 typ host generation 0 ufrag xSia network-cost 999","sdpMLineIndex":0,"sdpMid":"0","usernameFragment":"xSia"},"connectionId":"dc_glvbti523ck3","typ
+[HOST ws>] {"type":"ANSWER","dst":"gladiadores-v1-girwjejy4bcrw","payload":{"type":"data","connectionId":"dc_glvbti523ck3","browser":"chrome","sdp":{"type":"answer","sdp":"v=0\r\no=- 9123439612103014534 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\na=extmap-allow-mixed\r\na=msid-semantic: WMS\r\nm=
+[HOST ws>] {"type":"CANDIDATE","dst":"gladiadores-v1-girwjejy4bcrw","payload":{"type":"data","connectionId":"dc_glvbti523ck3","candidate":{"candidate":"candidate:3767896786 1 udp 2113937151 a2b90cfd-51c2-450f-8e41-10de6f99e6cd.local 48234 typ host generation 0 ufrag FzDO network-cost 999","sdpMid":"0","sdpMLin
+[HOST ws<] {"dst":"gladiadores-v1-JR2LS","payload":{"candidate":{"candidate":"candidate:1942271019 1 udp 1677729535 4.155.5.178 56336 typ srflx raddr 0.0.0.0 rport 0 generation 0 ufrag xSia network-cost 999","sdpMLineIndex":0,"sdpMid":"0","usernameFragment":"xSia"},"connectionId":"dc_glvbti523ck3","type":"data
+[GUEST ws<] {"dst":"gladiadores-v1-girwjejy4bcrw","payload":{"browser":"chrome","connectionId":"dc_glvbti523ck3","sdp":{"sdp":"v=0\r\no=- 9123439612103014534 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\na=extmap-allow-mixed\r\na=msid-semantic: WMS\r\nm=application 9 UDP/DTLS/SCTP webrtc-datachannel
+[GUEST ws<] {"dst":"gladiadores-v1-girwjejy4bcrw","payload":{"candidate":{"candidate":"candidate:3767896786 1 udp 2113937151 a2b90cfd-51c2-450f-8e41-10de6f99e6cd.local 48234 typ host generation 0 ufrag FzDO network-cost 999","sdpMLineIndex":0,"sdpMid":"0","usernameFragment":"FzDO"},"connectionId":"dc_glvbti523c
+unirse → OK (0.8s)
+diag host [{"state":"open","relay":null,"sent":2,"recv":1}] guest [{"state":"open","relay":false,"sent":1,"recv":2}]
+jugadores host 2
+duelo host {"s":"fight","sc":{"qhpmr2u8e3":0,"vigomsgm9i":0}} guest {"s":"fight","sc":{"qhpmr2u8e3":0,"vigomsgm9i":0}}
+antes [{"id":"qhpmr2u8e3","name":"Gladiador80","hp":150,"alive":true,"downed":false,"pos":[-13.5,0],"pts":0,"kills":0},{"id":"vigomsgm9i","name":"Gladiador72","hp":150,"alive":true,"downed":false,"pos":[13.5,0],"pts":0,"kills":0}]
+después [{"id":"qhpmr2u8e3","name":"Gladiador80","hp":150,"alive":true,"downed":false,"pos":[-13.5,0],"pts":0,"kills":0},{"id":"vigomsgm9i","name":"Gladiador72","hp":150,"alive":true,"downed":false,"pos":[8.75,0],"pts":0,"kills":0}]
+RESULTADO: OK
+exit=0
