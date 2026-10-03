@@ -9,7 +9,7 @@
             super();
             this.sig = o.signaling;
             this.remoteId = o.remoteId;
-            this.connectionId = o.connectionId || ('c' + GL.U.uid(10));
+            this.connectionId = o.connectionId || ('dc_gl' + GL.U.uid(10));
             this.initiator = !!o.initiator;
             this.state = 'connecting';
             this.pendingCandidates = [];
@@ -34,7 +34,7 @@
                 ch.onmessage = (ev) => this._onData(ev.data);
             }
             pc.onicecandidate = (ev) => {
-                if (ev.candidate) this.sig.send('CANDIDATE', this.remoteId, { kind: 'gladiadores', connectionId: this.connectionId, candidate: ev.candidate.toJSON ? ev.candidate.toJSON() : ev.candidate });
+                if (ev.candidate) this.sig.send('CANDIDATE', this.remoteId, { type: 'data', connectionId: this.connectionId, candidate: ev.candidate.toJSON ? ev.candidate.toJSON() : ev.candidate });
             };
             pc.oniceconnectionstatechange = () => {
                 const s = pc.iceConnectionState;
@@ -63,7 +63,7 @@
         async start() {
             const offer = await this.pc.createOffer();
             await this.pc.setLocalDescription(offer);
-            this.sig.send('OFFER', this.remoteId, { kind: 'gladiadores', connectionId: this.connectionId, sdp: this.pc.localDescription.toJSON ? this.pc.localDescription.toJSON() : { type: offer.type, sdp: offer.sdp } });
+            this.sig.send('OFFER', this.remoteId, { type: 'data', connectionId: this.connectionId, label: 'gladiadores', reliable: true, serialization: 'none', browser: 'chrome', sdp: this.pc.localDescription.toJSON ? this.pc.localDescription.toJSON() : { type: offer.type, sdp: offer.sdp } });
         }
 
         async handleSignal(msg) {
@@ -74,7 +74,7 @@
                     this.remoteSet = true; this._drain();
                     const ans = await this.pc.createAnswer();
                     await this.pc.setLocalDescription(ans);
-                    this.sig.send('ANSWER', this.remoteId, { kind: 'gladiadores', connectionId: this.connectionId, sdp: this.pc.localDescription.toJSON ? this.pc.localDescription.toJSON() : { type: ans.type, sdp: ans.sdp } });
+                    this.sig.send('ANSWER', this.remoteId, { type: 'data', connectionId: this.connectionId, browser: 'chrome', sdp: this.pc.localDescription.toJSON ? this.pc.localDescription.toJSON() : { type: ans.type, sdp: ans.sdp } });
                 } else if (msg.type === 'ANSWER' && this.initiator) {
                     if (this.pc.signalingState !== 'have-local-offer') return;
                     await this.pc.setRemoteDescription(p.sdp);
@@ -137,5 +137,9 @@
             this.emit('close', reason || 'closed', was);
         }
     }
+    /* PeerJS Cloud valida el formato de los mensajes: el payload debe parecerse
+     * al de la librería PeerJS (type:'data', connectionId…) o cierra el socket.
+     * Reconocemos los nuestros por el prefijo del connectionId. */
+    PeerLink.isOurs = (p) => !!p && p.type === 'data' && typeof p.connectionId === 'string' && p.connectionId.indexOf('dc_gl') === 0;
     GL.PeerLink = PeerLink;
 })();

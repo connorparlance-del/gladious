@@ -87,7 +87,7 @@
         _bindSignalingHost() {
             this.sig.on('message', (msg) => {
                 const p = msg.payload || {};
-                if (p.kind !== 'gladiadores') return;
+                if (!GL.PeerLink.isOurs(p)) return;
                 const cid = p.connectionId;
                 if (!cid) return;
                 let link = this.links.get(cid);
@@ -217,7 +217,7 @@
                 const p = msg.payload || {};
                 if (msg.type === 'EXPIRE' && this.hostLink && this.hostLink.state === 'connecting') { this.hostLink.close('not-found'); return; }
                 if (msg.type === 'LEAVE' && msg.src === this._hostPeerId(this.code)) { if (this.hostLink && this.hostLink.state === 'connecting') this.hostLink.close('not-found'); return; }
-                if (p.kind !== 'gladiadores') return;
+                if (!GL.PeerLink.isOurs(p)) return;
                 if (this.hostLink && p.connectionId === this.hostLink.connectionId) this.hostLink.handleSignal(msg);
             });
             return new Promise((resolve, reject) => {
