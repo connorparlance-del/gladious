@@ -14,7 +14,7 @@ jobs:
         with: { python-version: '3.12' }
       - run: pip install playwright && python -m playwright install --with-deps chromium
       - name: Dos navegadores contra la web publicada (PeerJS Cloud)
-        run: python -u tests/turn_probe.py 2>&1 | tee results.txt; echo "exit=${PIPESTATUS[0]}" >> results.txt
+        run: python -u tests/online_live.py https://connorparlance-del.github.io/gladious/ 2>&1 | tee results.txt; echo "exit=${PIPESTATUS[0]}" >> results.txt
       - name: Guardar resultados en la rama ci-results
         if: always()
         run: |
