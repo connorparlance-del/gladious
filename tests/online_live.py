@@ -10,7 +10,13 @@ with sync_playwright() as p:
     for n, pg in (('HOST', H), ('GUEST', G)):
         pg.on('console', lambda m, n=n: log(f'[{n} {m.type}] {m.text}'[:400]))
         pg.on('pageerror', lambda e, n=n: log(f'[{n} pageerror] {e}'))
-        pg.on('websocket', lambda ws, n=n: log(f'[{n} websocket] {ws.url[:120]}'))
+        def onws(ws, n=n):
+            log(f'[{n} websocket] {ws.url[:120]}')
+            ws.on('framesent', lambda d, n=n: log(f'[{n} ws>] {str(d)[:300]}') if 'HEARTBEAT' not in str(d) else None)
+            ws.on('framereceived', lambda d, n=n: log(f'[{n} ws<] {str(d)[:300]}'))
+            ws.on('close', lambda w, n=n: log(f'[{n} ws CLOSE]'))
+            ws.on('socketerror', lambda e, n=n: log(f'[{n} ws ERROR] {e}'))
+        pg.on('websocket', onws)
         pg.goto(URL); pg.wait_for_function('window.GLDEBUG && GLDEBUG.game.frame > 5', timeout=90000)
     log('cargado. señalización =', H.evaluate('JSON.stringify(GL.NETWORK_CONFIG.signaling)'))
     t = time.time()
