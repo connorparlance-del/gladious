@@ -206,7 +206,7 @@ Pruebas automáticas en `tests/` (Chromium sin interfaz + renderizado por CPU; `
 
 **NO verificado (limitaciones del entorno de desarrollo; no lo presento como comprobado):**
 - **Dos ordenadores en redes distintas a través de Internet.** Las pruebas WebRTC fueron entre procesos de la misma máquina.
-- **PeerJS Cloud** (`0.peerjs.com`): el entorno no tenía acceso a ese servidor. El cliente implementa el mismo protocolo (verificado contra el código fuente de PeerServer y contra el servidor incluido), pero la conexión real con PeerJS Cloud está sin probar.
+- **PeerJS Cloud** (`0.peerjs.com`): **probado** con dos navegadores Chromium reales contra la web publicada en GitHub Pages (prueba `tests/online_live.py`, ejecutada en GitHub Actions): crear sala, unirse, empezar duelo y sincronizar movimiento → OK. Ojo: PeerJS Cloud cierra la conexión si el `payload` de OFFER/ANSWER/CANDIDATE no tiene la forma de la librería PeerJS (`type:'data'`, `connectionId`); el cliente ya lo respeta. Ambos navegadores estaban en la misma máquina, así que **sigue sin probarse entre dos redes distintas** (redes con NAT estricto pueden necesitar TURN).
 - **TURN**: no había un servidor TURN disponible. La configuración está preparada pero sin probar.
 - **Rendimiento con GPU real**: las pruebas usan renderizado por CPU (muy lento). Datos útiles: ~105 *draw calls* en la pasada principal con la arena vacía (geometría estática fusionada) y ~470 con 20 enemigos en pantalla. Firefox, Edge y Safari no se probaron (sólo Chromium).
 
